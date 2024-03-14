@@ -9,10 +9,11 @@ elif d-e==0:
     print("running is as effective as a combination of running and strength exercises")
 else:
     print:("running is more effective")
+#result: a combination of running and strength exercises is more effective
 
 X=True
 Y=False
 W=X or Y
 print(W)
 
-result: True
+#result: True
