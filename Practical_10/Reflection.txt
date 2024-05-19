@@ -1,0 +1,3 @@
+The practical was quite challenging, especially getting the probabilistic model to work correctly. 
+However, I found the concept of herd immunity very interesting and the idea of modelling real-world problems was fascinating. 
+The most important thing I learned was how to implement a stochastic SIR model and understand the impact of different parameters like beta and gamma on the spread of a disease.
