@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Define the basic variables of the model
 N = 10000
 beta, gamma = 0.3, 0.05
 

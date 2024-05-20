@@ -1,17 +1,27 @@
+def read_fasta(file_path):
+    sequences = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            if line.startswith('>'):
+                gene_name = line[1:].strip().split()[0]
+                sequences[gene_name] = []
+            else:
+                sequences[gene_name].append(line.strip())
+    return sequences
 
-from Bio import SeqIO
-
-def extract_genes_with_duplication(fasta_file):
-    duplicated_genes = {}
-    for record in SeqIO.parse(fasta_file, "fasta"):
-        if 'duplication' in record.description:
-            simplified_name = record.description.split()[0]
-            duplicated_genes[simplified_name] = str(record.seq)
+def filter_by_duplication(sequences):
+    duplicated_genes = {name: ''.join(seqs) for name, seqs in sequences.items() if 'duplication' in name}
     return duplicated_genes
 
-def write_fasta(duplicate_genes, output_file):
-    SeqIO.write(duplicate_genes.values(), output_file, "fasta")
+def write_fasta(sequences, output_file):
+    with open(output_file, 'w') as file:
+        for name, sequence in sequences.items():
+            file.write(f">{name}\n")
+            file.write(f"{sequence}\n")
 
-duplicated_genes = extract_genes_with_duplication("Saccharomyces_cerevisiae.R64-1-1.cdna.all.fa")
+FAsta = 'c:\Users\彭成远\Desktop\IBI\IBI1_2023-24\Practical_8\Saccharomyces_cerevisiae.R64-1-1.cdna.all.fa'
+sequences = read_fasta(FAsta)
 
-write_fasta(duplicated_genes, "duplicate_genes.fa")
+duplicated_genes = filter_by_duplication(sequences)
+
+write_fasta(duplicated_genes, 'duplicate_genes.fa')

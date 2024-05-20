@@ -1,0 +1,9 @@
+#The identical percentage of human and mouse is 92.53968253968254 %
+#The alignment score of human and mouse is  3137.0
+#The identical percentage of human and rat is 165.14285714285714 %
+#The alignment score of human and rat is  3107.0
+#The identical percentage of rat and mouse is 96.82539682539682 %
+#The alignment score of rat and mouse is  3261.0
+
+#Rat and mouse are most closely related
+#Mouse is a	better model organism for human due to a higher alignment with human
