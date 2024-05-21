@@ -1,65 +1,68 @@
-import xml.etree.ElementTree as ET
-import xml.sax
-from xml.sax.handler import ContentHandler
+import xml.dom.minidom
 import datetime
+import xml.sax
 import matplotlib.pyplot as plt
+bio = 0
+mole = 0
+cell = 0
+file_path = r'c:\Users\彭成远\Desktop\IBI\IBI1_2023-24\go_obo.xml'
 
-xml_file_path = 'c:\\Users\\彭成远\\Desktop\\IBI\\IBI1_2023-24\\Practical_14\\go_obo.xml'
+start_time = datetime.datetime.now()
+DOM1 = xml.dom.minidom.parse(file_path)
+collection = DOM1.documentElement
+TAG = collection.getElementsByTagName("term")
+for each_tag in TAG:
+    if each_tag.getElementsByTagName("namespace")[0].firstChild.data == "biological_process":
+        bio += 1
+    if each_tag.getElementsByTagName("namespace")[0].firstChild.data == "molecular_function":
+        mole += 1
+    if each_tag.getElementsByTagName("namespace")[0].firstChild.data == "cellular_component":
+        cell += 1
+end_time1 = datetime.datetime.now()
+execution_time = end_time1 - start_time
+print('DOM methods takes ', execution_time)
+plt.bar(['bio','mole','cell'], [bio, mole, cell])
+plt.show()
+plt.clf()
 
-def parse_with_dom(xml_file_path):
-    start_time = datetime.datetime.now()
-    tree = ET.parse(xml_file_path)
-    root = tree.getroot()
-    
-    ontology_count = {'molecular_function': 0, 'biological_process': 0, 'cellular_component': 0}
-    
-    for term in root.findall('term'):
-        namespace = term.find('namespace').text
-        if namespace in ontology_count:
-            ontology_count[namespace] += 1
-    
-    end_time = datetime.datetime.now()
-    return ontology_count, (end_time - start_time).total_seconds()
 
-class SaxHandler(ContentHandler):
+
+
+start_time2 = datetime.datetime.now()
+namelist = []
+total = {}
+class namespaceHandler(xml.sax.ContentHandler):
     def __init__(self):
-        self.ontology_count = {'molecular_function': 0, 'biological_process': 0, 'cellular_component': 0}
-        self.current_namespace = ''
+        self.currentElement = ''
+        self.namespace = ''
     
-    def startElement(self, name, attrs):
-        if name == 'namespace':
-            self.current_namespace = attrs.getValue('type')
+    def startElement(self, tag, attrs):
+        self.currentElement = tag
     
-    def endElement(self, name):
-        if name == 'namespace' and self.current_namespace in self.ontology_count:
-            self.ontology_count[self.current_namespace] += 1
-
-def parse_with_sax(xml_file_path):
-    start_time = datetime.datetime.now()
-    handler = SaxHandler()
-    parser = xml.sax.make_parser()
-    parser.setContentHandler(handler)
-    parser.parse(xml_file_path)
-    end_time = datetime.datetime.now()
-    return handler.ontology_count, (end_time - start_time).total_seconds()
-
-def plot_ontology_counts(counts):
-    plt.bar(['Molecular Function', 'Biological Process', 'Cellular Component'], counts)
-    plt.xlabel('Ontology')
-    plt.ylabel('Number of GO Terms')
-    plt.title('Gene Ontology Term Counts by Ontology')
-    plt.show()
-
-if __name__ == "__main__":
-    dom_counts, dom_time = parse_with_dom(xml_file_path)
-    sax_counts, sax_time = parse_with_sax(xml_file_path)
+    def characters(self, content):
+        if self.currentElement == 'namespace':
+            self.namespace += content.strip()
     
-    print(f"DOM API Time: {dom_time} seconds")
-    print(f"SAX API Time: {sax_time} seconds")
-    print(f"Fastest API: {('DOM' if dom_time < sax_time else 'SAX')} API")
+    def endElement(self, tag):
+        if tag == 'namespace':
+            if self.namespace:  
+                namelist.append(self.namespace)  
+                self.namespace = ''  
     
-    plot_ontology_counts(dom_counts) 
-
-
-    for ontology in ['molecular_function', 'biological_process', 'cellular_component']:
-        print(f"{ontology.title()}: DOM Count = {dom_counts[ontology]}, SAX Count = {sax_counts[ontology]}")
+handler = namespaceHandler()
+parser = xml.sax.make_parser()
+parser.setContentHandler(handler)
+parser.parse(file_path)
+    
+for name in namelist:
+    if name not in total:
+        total[name] = 1
+    else:
+        total[name] += 1
+    
+end_time2 = datetime.datetime.now()
+time_taken = end_time2 - start_time2
+print('SAX methods takes', time_taken)
+plt.bar(['bio','mole','cell'], [total['biological_process'], total['molecular_function'], total['cellular_component']])
+plt.show()
+plt.clf()

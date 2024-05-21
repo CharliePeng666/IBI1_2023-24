@@ -8,7 +8,7 @@ if d-e<0:
 elif d-e==0:
     print("running is as effective as a combination of running and strength exercises")
 else:
-    print:("running is more effective")
+    print("running is more effective")
 #result: a combination of running and strength exercises is more effective
 
 X=True

@@ -1,31 +1,29 @@
-# dalys.py
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-data_file_path ='c:\Users\彭成远\Desktop\IBI\IBI1_2023-24\Practical_7\dalys-rate-from-all-causes(1).csv'
-os.chdir(os.path.dirname(data_file_path))
+os.chdir('c:\Users\彭成远\Desktop\IBI\IBI1_2023-24\Practical_7\dalys-rate-from-all-causes(1).csv')
+
 dalys_data = pd.read_csv("dalys-rate-from-all-causes(1).csv")
+dalys_data.head(4)
+dalys_data.info()
+dalys_data.describe()
 
-print(dalys_data.iloc[0:100:10, 3])
+print(dalys_data.iloc[0:101:10,3])
+my_columns=[False,False,False,True]
+print(dalys_data.loc[0:29,my_columns])
+china_data=dalys_data.iloc[1140:1170,[0,2,3]]
+np.mean(china_data.DALYs)
 
-afghanistan_dalys = dalys_data[dalys_data['Entity'] == 'Afghanistan']['DALYs']
-print(afghanistan_dalys)
+#DALYs in China in 2019 was larger than the mean
 
-china_data = dalys_data[dalys_data['Entity'] == 'China']
-mean_dalys_china = china_data['DALYs'].mean()
-china_2019_dalys = china_data[china_data['Year'] == 2019]['DALYs'].values[0]
-print(f"Mean DALYs in China: {mean_dalys_china}")
-print(f"DALYs in China in 2019: {china_2019_dalys}")
-print(f"Was 2019 above or below the mean DALYs in China? {'Above' if china_2019_dalys > mean_dalys_china else 'Below'}")
-
-plt.plot(china_data['Year'], china_data['DALYs'], 'b+')
-plt.xlabel('Year')
-plt.ylabel('DALYs')
-plt.title('DALYs in China Over Time')
-plt.xticks(rotation=-90) 
+plt.plot(china_data.Year, china_data.DALYs, 'b+')
+plt.xticks(china_data.Year,rotation=-90)
 plt.show()
+plt.close()
 
-
-        
+print(dalys_data[dalys_data.Year==2019].DALYs)
+dalys_data_2019=dalys_data[dalys_data.Year==2019]
+low_dalys_data=dalys_data_2019[dalys_data_2019.DALYs<18000]
+print(low_dalys_data['Entity'])
