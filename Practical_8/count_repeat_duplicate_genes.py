@@ -1,27 +1,16 @@
+import re
 from Bio import SeqIO
 
-def count_repeats(sequence, pattern):
-    return sequence.count(pattern)
+repeat_seq = input("Enter the repetitive sequence ('GTGTGT' or 'GTCTGT'): ")
 
-def filter_genes_with_repeat(duplicate_genes, repeat_pattern):
-    filtered_genes = {}
-    for gene_name, sequence in duplicate_genes.items():
-        if count_repeats(sequence, repeat_pattern) > 0:
-            filtered_genes[gene_name] = sequence
-    return filtered_genes
+input_file = 'c:\Users\彭成远\Desktop\IBI\IBI1_2023-24\Practical_8\Saccharomyces_cerevisiae.R64-1-1.cdna.all.fa'
+output_file = f'{repeat_seq}_duplicate_genes.fa'
 
-def write_fasta_with_repeats(duplicate_genes, repeat_pattern, output_file):
-    for record in SeqIO.parse(duplicate_genes, "fasta"):
-        if repeat_pattern in str(record.seq):
-            new_name = f"{record.id}_{count_repeats(str(record.seq), repeat_pattern)}"
-            new_record = record.__class__(seq=record.seq, id=new_name, description="")
-            SeqIO.write(new_record, output_file, "fasta")
-
-duplicate_genes = SeqIO.to_dict(SeqIO.parse("duplicate_genes.fa", "fasta"))
-
-repeat_pattern = input("Enter the repetitive sequence ('GTGTGT' or 'GTCTGT'): ")
-
-filtered_genes = filter_genes_with_repeat(duplicate_genes, repeat_pattern)
-
-output_filename = f"{repeat_pattern}_duplicate_genes.fa"
-write_fasta_with_repeats(filtered_genes, repeat_pattern, output_filename)
+duplicate_genes_with_repeats = {}
+for record in SeqIO.parse(input_file, "fasta"):
+    if re.search(repeat_seq, str(record.seq)):
+        simplified_name = record.id.split('|')[0] 
+        duplicate_genes_with_repeats[simplified_name] = str(record.seq)
+with open(output_file, 'w') as output_handle:
+    for gene_name, gene_sequence in duplicate_genes_with_repeats.items():
+        output_handle.write(f">{gene_name}\n{gene_sequence}\n")
